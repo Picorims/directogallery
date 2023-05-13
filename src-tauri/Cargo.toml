@@ -3,7 +3,7 @@ name = "directogallery"
 version = "1.0.0"
 description = "Directogallery is a small app designed to view a directory as a gallery to make it easier to browse images."
 authors = ["Picorims"]
-license = "GPL-3.0"
+license = "GPL-3.0-or-later"
 repository = "https://github.com/Picorims/directogallery"
 edition = "2021"
 

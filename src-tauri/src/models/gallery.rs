@@ -17,12 +17,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
+use tauri::api::dir::DiskEntry;
 
-import "./styles.css";
-import App from "./App.svelte";
+/// State of the gallery exploration by the user
+#[derive(Debug)]
+pub struct Gallery {
+    exploration_stack: Vec<Vec<DiskEntry>>
+}
 
-const app = new App({
-    target: document.getElementById("app"),
-});
+impl Gallery {
+    /// Creates an empty gallery
+    pub fn new() -> Self {
+        Gallery { exploration_stack: vec![] }
+    }
 
-export default app;
+    /// recreate the gallery based on the new provided root content.
+    pub fn set_root(&mut self, root: Vec<DiskEntry>) {
+        self.exploration_stack = vec![];
+        self.exploration_stack.push(root);
+    }
+}

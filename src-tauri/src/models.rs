@@ -17,12 +17,4 @@
 // You should have received a copy of the GNU General Public License
 // along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
-
-import "./styles.css";
-import App from "./App.svelte";
-
-const app = new App({
-    target: document.getElementById("app"),
-});
-
-export default app;
+pub mod gallery;

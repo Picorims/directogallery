@@ -17,23 +17,52 @@
 // You should have received a copy of the GNU General Public License
 // along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
+mod gallery_dir;
+
+use std::{path::PathBuf};
+
 use tauri::api::dir::DiskEntry;
+
+use gallery_dir::GalleryDir;
+
+use self::gallery_dir::CreationError;
 
 /// State of the gallery exploration by the user
 #[derive(Debug)]
 pub struct Gallery {
-    exploration_stack: Vec<Vec<DiskEntry>>
+    root: Option<GalleryDir>
 }
 
 impl Gallery {
     /// Creates an empty gallery
     pub fn new() -> Self {
-        Gallery { exploration_stack: vec![] }
+        Gallery { root: None }
     }
 
-    /// recreate the gallery based on the new provided root content.
-    pub fn set_root(&mut self, root: Vec<DiskEntry>) {
-        self.exploration_stack = vec![];
-        self.exploration_stack.push(root);
+    /// recreate the gallery based on the new provided root content
+    /// (recursively explored directory).
+    pub fn process_root(&mut self, root_path: PathBuf, root_content: Vec<DiskEntry>) -> Result<(), CreationError> {
+        let mut root_dir = GalleryDir::new(root_path)?;
+        Self::fill_gallery_dir(&mut root_dir, root_content)?;
+        self.root = Some(root_dir);
+        Ok(())
+    }
+
+    fn fill_gallery_dir(dir: &mut GalleryDir, content: Vec<DiskEntry>) -> Result<(), CreationError> {
+        for entry in content {
+            if entry.children.is_none() {
+                // file
+                dir.add_file(entry);
+            } else {
+                // directory
+                let mut child_dir = GalleryDir::new(entry.path)?;
+                let children_vec = entry.children.ok_or(
+                    CreationError
+                )?;
+                Self::fill_gallery_dir(&mut child_dir, children_vec)?;
+                dir.add_dir(child_dir);
+            }
+        }
+        Ok(())
     }
 }

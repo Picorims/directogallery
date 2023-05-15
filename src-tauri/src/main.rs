@@ -23,7 +23,7 @@
 
 mod models;
 
-use std::sync::Mutex;
+use std::{sync::Mutex, path::PathBuf};
 
 use models::gallery::Gallery;
 
@@ -42,7 +42,7 @@ fn cache_root(path: &str, state: tauri::State<GalleryState>) -> Result<(), Strin
 
         // take the mutex before changing its value
         let mut gallery = state.0.lock().unwrap();
-        gallery.set_root(dir_content);
+        gallery.process_root(PathBuf::from(path), dir_content).map_err(|e| e.to_string())?;
         println!("{:?}", gallery);
     }
 

@@ -25,8 +25,8 @@ mod models;
 
 use std::{sync::Mutex, path::PathBuf};
 
-use models::gallery::Gallery;
-use tauri::{AppHandle, State};
+use models::gallery::{Gallery, JSONError};
+use tauri::{State};
 
 #[derive(Debug)]
 enum GalleryStateValue {
@@ -41,7 +41,7 @@ struct GalleryState(Mutex<GalleryStateValue>);
 #[tauri::command]
 /// Recursively caches the content of the provided directory, considered the root
 /// of the gallery.
-fn cache_root(path: &str, state: State<GalleryState>, app_handle: AppHandle) -> Result<(), String> {
+fn cache_root(path: &str, state: State<GalleryState>) -> Result<(), String> {
     use tauri::api::dir;
 
     if dir::is_dir(path).map_err(|e| e.to_string())? {
@@ -57,10 +57,12 @@ fn cache_root(path: &str, state: State<GalleryState>, app_handle: AppHandle) -> 
 
 #[tauri::command]
 /// Return the JSON structure of the current directory (not recursive)
-fn get_current_dir_data(state: tauri::State<GalleryState>) -> Option<serde_json::Value> {
-    todo!();
+fn get_current_dir_data(state: tauri::State<GalleryState>) -> Result<serde_json::Value, String> {
     let gallery = state.0.lock().unwrap();
-    // gallery.current_dir_as_json()
+    match *gallery {
+        GalleryStateValue::Nil => Err(JSONError.to_string()),
+        GalleryStateValue::Gallery(ref g) => Ok(g.current_dir_as_json().map_err(|e| e.to_string())?)
+    }
 }
 
 fn main() {

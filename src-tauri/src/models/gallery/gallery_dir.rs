@@ -19,6 +19,7 @@
 
 use std::{path::PathBuf, error, fmt, sync::{Mutex, Arc, Weak}};
 
+use serde_json::json;
 use tauri::api::dir::DiskEntry;
 
 /// Error thrown when the GalleryDir encounters a problem
@@ -61,6 +62,16 @@ impl GalleryDir {
 
     pub fn get_name(&self) -> String { self.name.clone() }
     pub fn get_path(&self) -> PathBuf { self.path.clone() }
+    pub fn get_files_json(&self) -> serde_json::Value {
+        json!(self.files)
+    }
+    pub fn get_dirs_json(&self) -> serde_json::Value {
+        let directories = self.directories.lock().unwrap();
+        let names: Vec<_> = directories.iter().map(|d| {
+            d.lock().unwrap().get_name()
+        }).collect();
+        json!(names)
+    }
 
     pub fn add_file(&mut self, file: DiskEntry) {
         self.files.push(file);
@@ -79,7 +90,7 @@ impl GalleryDir {
                 self.add_file(entry);
             } else {
                 // directory
-                let mut child_dir = Arc::new(Mutex::new(GalleryDir::new(entry.path)?));
+                let child_dir = Arc::new(Mutex::new(GalleryDir::new(entry.path)?));
                 let children_vec = entry.children.ok_or(
                     CreationError
                 )?;

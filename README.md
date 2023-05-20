@@ -12,6 +12,8 @@ This is mostly an experiment around developing with Tauri, Svelte and TypeScript
 npm run tauri dev
 ```
 
+Current rustc version used: 1.69.0
+
 ## Recommended IDE Setup (from Tauri)
 
 [VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).

@@ -22,8 +22,16 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
     import Menu from "./components/Header.svelte";
+    import { currentDir } from "./stores";
+
+    let stuff: string;
+    currentDir.subscribe((v) => {
+        console.log(v);
+        stuff = (v === null)? "nothing" : JSON.stringify(v)
+    });
 </script>
 
 <main class="container">
     <Menu />
+    <div>{stuff}</div>
 </main>

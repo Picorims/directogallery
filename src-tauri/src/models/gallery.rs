@@ -19,14 +19,23 @@
 
 mod gallery_dir;
 
-use std::{path::PathBuf, sync::{Mutex, Weak, Arc}, error, borrow::BorrowMut};
+use std::{path::PathBuf, sync::{Mutex, Weak, Arc}, error, fmt};
 
 use serde_json::json;
-use tauri::{api::dir::{DiskEntry, self}};
 
 use gallery_dir::GalleryDir;
+use tauri::api::dir;
 
-use self::gallery_dir::CreationError;
+/// Error thrown when the GalleryDir encounters a problem
+#[derive(Debug)]
+pub struct JSONError;
+impl error::Error for JSONError {}
+impl fmt::Display for JSONError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "The Gallery could not be converted to JSON.")
+    }
+}
+
 
 /// State of the gallery exploration by the user
 #[derive(Debug)]
@@ -51,15 +60,15 @@ impl Gallery {
         Ok(gallery)
     }
 
-    pub fn current_dir_as_json(&self) -> Option<serde_json::Value> {
-        todo!()
-        // match self.current_dir {
-        //     Some(dir) => {
-        //         Some(json!({
-        //             "name": *dir.get_name()
-        //         }))
-        //     }
-        //     None => None
-        // }
+    pub fn current_dir_as_json(&self) -> Result<serde_json::Value, JSONError> {
+        let current_dir_arc = self.current_dir.upgrade().ok_or(JSONError)?;
+        let current_dir = current_dir_arc.lock().unwrap();
+
+        Ok(json!({
+            "name": current_dir.get_name(),
+            "path": current_dir.get_path(),
+            "files": current_dir.get_files_json(),
+            "directories": current_dir.get_dirs_json()
+        }))
     }
 }

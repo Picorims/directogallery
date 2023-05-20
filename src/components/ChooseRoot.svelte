@@ -22,6 +22,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
     import { open } from "@tauri-apps/api/dialog";
     import { invoke } from "@tauri-apps/api/tauri";
+    import { currentDir } from "src/stores";
 
     let selectedRoot: String = "No root selected.";
 
@@ -30,13 +31,20 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
      */
     async function selectRoot() {
         let selectedPath = await open({
-            directory: true
+            directory: true,
+            multiple: false,
+            title: "Choose the root directory of the gallery"
         });
 
         if (!Array.isArray(selectedPath) && selectedPath !== null) {
             selectedRoot = selectedPath;
             // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
             await invoke("cache_root", {path: selectedRoot});
+            try {
+                currentDir.set(await invoke("get_current_dir_data"));
+            } catch (e) {
+                alert("Could not read the current directory.");
+            }
         }
     }
 </script>

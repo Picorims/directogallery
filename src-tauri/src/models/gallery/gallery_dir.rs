@@ -17,12 +17,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
-use std::{path::PathBuf, error, fmt};
+use std::{path::PathBuf, error, fmt, sync::{Mutex, Arc, Weak}};
 
 use tauri::api::dir::DiskEntry;
 
-#[derive(Debug)]
 /// Error thrown when the GalleryDir encounters a problem
+#[derive(Debug)]
 pub struct CreationError;
 impl error::Error for CreationError {}
 impl fmt::Display for CreationError {
@@ -34,7 +34,10 @@ impl fmt::Display for CreationError {
 /// represent a node of the directory tree of the gallery
 #[derive(Debug)]
 pub struct GalleryDir {
-    directories: Vec<GalleryDir>,
+    // see https://doc.rust-lang.org/book/ch15-06-reference-cycles.html
+    // and https://doc.rust-lang.org/book/ch16-03-shared-state.html
+    directories: Mutex<Vec<Arc<Mutex<GalleryDir>>>>,
+    parent: Weak<Mutex<GalleryDir>>,
     files: Vec<DiskEntry>,
     name: String,
     path: PathBuf
@@ -48,7 +51,8 @@ impl GalleryDir {
         // unknown characters which is less of a problem.
         let name_os_str = path.file_name().ok_or(CreationError)?;
         Ok(GalleryDir {
-            directories: vec![],
+            directories: Mutex::new(vec![]),
+            parent: Weak::new(),
             files: vec![],
             name: String::from(name_os_str.to_str().unwrap_or("unknown")),
             path: path,
@@ -62,7 +66,28 @@ impl GalleryDir {
         self.files.push(file);
     }
 
-    pub fn add_dir(&mut self, dir: GalleryDir) {
-        self.directories.push(dir);
+    pub fn add_dir(&mut self, dir: Arc<Mutex<GalleryDir>>) {
+        self.directories.lock().unwrap().push(dir);
+    }
+
+    /// fill the provided GalleryDir with file and directories of the content vector,
+    /// and creates its children GalleryDir for directories.
+    pub fn fill(&mut self, content: Vec<DiskEntry>) -> Result<(), CreationError> {
+        for entry in content {
+            if entry.children.is_none() {
+                // file
+                self.add_file(entry);
+            } else {
+                // directory
+                let mut child_dir = Arc::new(Mutex::new(GalleryDir::new(entry.path)?));
+                let children_vec = entry.children.ok_or(
+                    CreationError
+                )?;
+                child_dir.lock().unwrap().fill(children_vec)?;
+                self.add_dir(Arc::clone(&child_dir));
+                self.parent = Arc::downgrade(&child_dir);
+            }
+        }
+        Ok(())
     }
 }

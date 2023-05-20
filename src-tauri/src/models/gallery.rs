@@ -19,9 +19,10 @@
 
 mod gallery_dir;
 
-use std::{path::PathBuf};
+use std::{path::PathBuf, sync::{Mutex, Weak, Arc}, error, borrow::BorrowMut};
 
-use tauri::api::dir::DiskEntry;
+use serde_json::json;
+use tauri::{api::dir::{DiskEntry, self}};
 
 use gallery_dir::GalleryDir;
 
@@ -30,39 +31,35 @@ use self::gallery_dir::CreationError;
 /// State of the gallery exploration by the user
 #[derive(Debug)]
 pub struct Gallery {
-    root: Option<GalleryDir>
+    root: Arc<Mutex<GalleryDir>>,
+    current_dir: Weak<Mutex<GalleryDir>>
 }
 
 impl Gallery {
     /// Creates an empty gallery
-    pub fn new() -> Self {
-        Gallery { root: None }
+    pub fn new(path: PathBuf) -> Result<Self, Box<dyn error::Error>> {
+        let dir_content = dir::read_dir(&path, true)?;
+        let root = Arc::new(Mutex::new(GalleryDir::new(path)?));
+
+        let gallery = Gallery {
+            root: Arc::clone(&root),
+            current_dir: Arc::downgrade(&root) // empty
+        };
+        
+        // gallery.root automatically deref to the mutex
+        gallery.root.lock().unwrap().fill(dir_content)?;
+        Ok(gallery)
     }
 
-    /// recreate the gallery based on the new provided root content
-    /// (recursively explored directory).
-    pub fn process_root(&mut self, root_path: PathBuf, root_content: Vec<DiskEntry>) -> Result<(), CreationError> {
-        let mut root_dir = GalleryDir::new(root_path)?;
-        Self::fill_gallery_dir(&mut root_dir, root_content)?;
-        self.root = Some(root_dir);
-        Ok(())
-    }
-
-    fn fill_gallery_dir(dir: &mut GalleryDir, content: Vec<DiskEntry>) -> Result<(), CreationError> {
-        for entry in content {
-            if entry.children.is_none() {
-                // file
-                dir.add_file(entry);
-            } else {
-                // directory
-                let mut child_dir = GalleryDir::new(entry.path)?;
-                let children_vec = entry.children.ok_or(
-                    CreationError
-                )?;
-                Self::fill_gallery_dir(&mut child_dir, children_vec)?;
-                dir.add_dir(child_dir);
-            }
-        }
-        Ok(())
+    pub fn current_dir_as_json(&self) -> Option<serde_json::Value> {
+        todo!()
+        // match self.current_dir {
+        //     Some(dir) => {
+        //         Some(json!({
+        //             "name": *dir.get_name()
+        //         }))
+        //     }
+        //     None => None
+        // }
     }
 }

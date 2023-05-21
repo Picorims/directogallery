@@ -24,6 +24,11 @@
         "message": true,
         "open": true,
         "save": false
+      },
+      "protocol": {
+        "all": false,
+        "asset": true,
+        "assetScope": []
       }
     },
     "bundle": {

@@ -22,6 +22,10 @@ use std::{path::PathBuf, error, fmt, sync::{Mutex, Arc, Weak}};
 use serde_json::json;
 use tauri::api::dir::DiskEntry;
 
+// https://developer.mozilla.org/fr/docs/Web/HTML/Element/img
+// https://stackoverflow.com/a/42764117 - reference to a static array of references to static strings
+const ALLOWED_IMG_EXTENSIONS: &'static [&'static str] = &["apng", "avif", "gif", "jpg", "jpeg", "jpe", "jif", "jfif", "png", "svg", "webp"];
+
 /// Error thrown when the GalleryDir encounters a problem
 #[derive(Debug)]
 pub struct CreationError;
@@ -87,7 +91,16 @@ impl GalleryDir {
         for entry in content {
             if entry.children.is_none() {
                 // file
-                self.add_file(entry);
+                let extension = entry.path.extension();
+                if extension.is_some() {
+                    let extension_str = extension.unwrap();
+
+                    // only keep image files
+                    ALLOWED_IMG_EXTENSIONS.iter()
+                        .any(|str| {extension_str.eq_ignore_ascii_case(str)})
+                        .then(|| {self.add_file(entry);});
+                }
+                
             } else {
                 // directory
                 let child_dir = Arc::new(Mutex::new(GalleryDir::new(entry.path)?));

@@ -19,13 +19,15 @@
 
 import { writable, type Writable } from "svelte/store";
 
-interface DirContent {
+export interface FileContent {
+    name: string | null,
+    path: string
+}
+
+export interface DirContent {
     name: string,
     path: string,
-    files: Array<{
-        name: string,
-        path: string
-    }>,
+    files: Array<FileContent>,
     directories: Array<String>
 }
 

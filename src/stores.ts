@@ -18,6 +18,7 @@
 // along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
 import { writable, type Writable } from "svelte/store";
+import { invoke } from "@tauri-apps/api/tauri";
 
 export interface FileContent {
     name: string | null,
@@ -31,4 +32,19 @@ export interface DirContent {
     directories: Array<String>
 }
 
+/**
+ * Information about the currently browsed directory
+ */
 export const currentDir: Writable<DirContent | null> = writable(null);
+
+/**
+ * Loads the currently selected directory in the UI by requesting
+ * its JSON and updating the store.
+ */
+export async function loadCurrentDirJSON() {
+    try {
+        currentDir.set(await invoke("get_current_dir_data"));
+    } catch (e) {
+        alert("Could not read the current directory.");
+    }
+}

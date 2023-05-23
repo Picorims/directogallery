@@ -36,6 +36,16 @@ impl fmt::Display for JSONError {
     }
 }
 
+/// Error thrown when the GalleryDir cannot navigate to another directory
+#[derive(Debug)]
+pub struct NavError;
+impl error::Error for NavError {}
+impl fmt::Display for NavError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "The Gallery could not navigate to the requested directory.")
+    }
+}
+
 
 /// State of the gallery exploration by the user
 #[derive(Debug)]
@@ -70,5 +80,13 @@ impl Gallery {
             "files": current_dir.get_files_json(),
             "directories": current_dir.get_dirs_json()
         }))
+    }
+
+    /// modify the current dir to a child dir of the current dir selected by its name
+    pub fn explore_child_dir(&mut self, name: String) -> Result<(), NavError> {
+        let arc_pointer = self.current_dir.upgrade().ok_or(NavError)?;
+        let new_dir = arc_pointer.lock().unwrap().get_dir_by_name(name);
+        self.current_dir = new_dir.ok_or(NavError)?;
+        Ok(())
     }
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { currentDir, type FileContent } from "../stores";
-    import {convertFileSrc} from "@tauri-apps/api/tauri"
+    import { currentDir, loadCurrentDirJSON, type FileContent } from "../stores";
+    import {convertFileSrc, invoke} from "@tauri-apps/api/tauri"
 
     let show: boolean = false;
     let title: string;
@@ -19,6 +19,22 @@
         }
     });
 
+    /**
+     * Explores the child directory specified by `name`,
+     * refresh the UI to load this child.
+     * @param name name of the child directory
+     */
+     async function browseChild(name: String) {
+        try {
+            await invoke("navigate_to_child_dir", {name: name});
+        } catch (e) {
+            alert("Could not read the child directory.");
+        } finally {
+            await loadCurrentDirJSON();
+        }
+    }
+
+
 </script>
 
 {#if show}
@@ -28,7 +44,7 @@
         </div>
         <h3>Directories</h3>
         {#each directories as dirName}
-            <button>{dirName}</button>
+            <button on:click={e => browseChild(dirName)}>{dirName}</button>
         {/each}
         <h3>Files</h3>
         <div class="images-container">

@@ -77,6 +77,16 @@ impl GalleryDir {
         json!(names)
     }
 
+    pub fn get_dir_by_name(&self, name: String) -> Option<Weak<Mutex<GalleryDir>>> {
+        let directories = self.directories.lock().unwrap();
+        let dir = directories.iter()
+            .find(|d| {d.lock().unwrap().get_name() == name});
+        match dir {
+            None => None,
+            Some(d) => Some(Arc::downgrade(d))
+        }
+    }
+
     pub fn add_file(&mut self, file: DiskEntry) {
         self.files.push(file);
     }

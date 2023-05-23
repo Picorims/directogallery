@@ -43,7 +43,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
             // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
             try {
                 await invoke("cache_root", {path: selectedRoot});
-                await loadCurrentDirJSON();
+                await loadCurrentDirJSON(true);
             } catch (e) {
                 alert("Could not cache the current directory.");
             }

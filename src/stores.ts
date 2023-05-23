@@ -36,14 +36,17 @@ export interface DirContent {
  * Information about the currently browsed directory
  */
 export const currentDir: Writable<DirContent | null> = writable(null);
+export const stack: Writable<Array<String>> = writable([]);
 
 /**
  * Loads the currently selected directory in the UI by requesting
  * its JSON and updating the store.
  */
-export async function loadCurrentDirJSON() {
+export async function loadCurrentDirJSON(resetStack: boolean = false) {
     try {
-        currentDir.set(await invoke("get_current_dir_data"));
+        let newJSON: DirContent = await invoke("get_current_dir_data");
+        if (resetStack) stack.set([newJSON.name]); // reset stack
+        currentDir.set(newJSON);
     } catch (e) {
         alert("Could not read the current directory.");
     }

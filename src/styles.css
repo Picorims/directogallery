@@ -22,6 +22,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 body {
   margin: 0;
   padding: 0;
+  user-select: none;
 }
 
 * {
@@ -44,23 +45,20 @@ body {
   --color-theme: #086898;
   --color-theme-contrast: #0a91d4;
   --color-text: #0f0f0f;
-  --color-text-main-title: #4b4b4b;
+  --color-faded-content: #4b4b4b;
+  --color-text-main-title: var(--color-faded-content);
   --color-text-shadow: #929292;
   --color-background-main: #f6f6f6;
   --color-background-box: #e4e4e4;
   --color-button: var(--color-theme);
   --color-button-hover: var(--color-theme-contrast);
-  --color-button-disabled: #4b4b4b;
+  --color-button-disabled: var(--color-faded-content);
   --color-button-text: #fbfbfb;
   --color-button-shadow: var(--color-text-shadow);
   --color-box-shadow: var(--color-text-shadow);
 
   color: var(--color-text);
   background-color: var(--color-background-main);
-}
-
-.container {
-  margin: 0;
 }
 
 button {
@@ -91,6 +89,12 @@ button:hover:not(:disabled) {
 button:active:not(:disabled) {
   transform: scale(0.95);
   box-shadow: 0px 2px 4px var(--color-button-shadow);
+}
+
+.g-box {
+  background-color: var(--color-background-box);
+  border-radius: 10px;
+  box-shadow: 0 2px 4px var(--color-box-shadow);
 }
 
 @media (prefers-color-scheme: dark) {

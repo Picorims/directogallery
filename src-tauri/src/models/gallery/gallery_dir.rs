@@ -41,23 +41,23 @@ impl fmt::Display for CreationError {
 pub struct GalleryDir {
     // see https://doc.rust-lang.org/book/ch15-06-reference-cycles.html
     // and https://doc.rust-lang.org/book/ch16-03-shared-state.html
+    parent: Option<Weak<Mutex<GalleryDir>>>,
     directories: Mutex<Vec<Arc<Mutex<GalleryDir>>>>,
-    parent: Weak<Mutex<GalleryDir>>,
     files: Vec<DiskEntry>,
     name: String,
     path: PathBuf
 }
 
 impl GalleryDir {
-    pub fn new(path: PathBuf) -> Result<Self, CreationError> {
+    pub fn new(path: PathBuf, parent: Option<Weak<Mutex<GalleryDir>>>) -> Result<Self, CreationError> {
         // if the directory name is invalid, it is likely that the directory itself
         // is not fitting as well, as per the file_name function specification.
         // If it can't be converted to a string, it is more likely that it contains
         // unknown characters which is less of a problem.
         let name_os_str = path.file_name().ok_or(CreationError)?;
         Ok(GalleryDir {
+            parent: parent,
             directories: Mutex::new(vec![]),
-            parent: Weak::new(),
             files: vec![],
             name: String::from(name_os_str.to_str().unwrap_or("unknown")),
             path: path,
@@ -87,6 +87,13 @@ impl GalleryDir {
         }
     }
 
+    pub fn get_parent(&self) -> Option<Weak<Mutex<GalleryDir>>> {
+        match &self.parent {
+            Some(p) => Some(Weak::clone(p)),
+            None => None
+        }
+    }
+
     pub fn add_file(&mut self, file: DiskEntry) {
         self.files.push(file);
     }
@@ -97,7 +104,7 @@ impl GalleryDir {
 
     /// fill the provided GalleryDir with file and directories of the content vector,
     /// and creates its children GalleryDir for directories.
-    pub fn fill(&mut self, content: Vec<DiskEntry>) -> Result<(), CreationError> {
+    pub fn fill(&mut self, content: Vec<DiskEntry>, parent: Weak<Mutex<GalleryDir>>) -> Result<(), CreationError> {
         for entry in content {
             if entry.children.is_none() {
                 // file
@@ -113,15 +120,22 @@ impl GalleryDir {
                 
             } else {
                 // directory
-                let child_dir = Arc::new(Mutex::new(GalleryDir::new(entry.path)?));
-                let children_vec = entry.children.ok_or(
-                    CreationError
-                )?;
-                child_dir.lock().unwrap().fill(children_vec)?;
+                let child_dir = Arc::new(Mutex::new(GalleryDir::new(entry.path, Some(Weak::clone(&parent)))?));
+                let children_vec = entry.children.ok_or(CreationError)?;
+                let mut child_dir_mut = child_dir.lock().unwrap();
+                child_dir_mut.fill(children_vec, Arc::downgrade(&child_dir))?;
                 self.add_dir(Arc::clone(&child_dir));
-                self.parent = Arc::downgrade(&child_dir);
             }
         }
         Ok(())
+    }
+}
+
+impl fmt::Display for GalleryDir {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f, "{{parent: {:?}, directories: {}, files: {}, name: {}, path: {:?})}}",
+            self.parent, self.directories.lock().unwrap().len(), self.files.len(), self.name, self.path
+        )
     }
 }

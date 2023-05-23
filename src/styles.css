@@ -50,6 +50,7 @@ body {
   --color-background-box: #e4e4e4;
   --color-button: var(--color-theme);
   --color-button-hover: var(--color-theme-contrast);
+  --color-button-disabled: #4b4b4b;
   --color-button-text: #fbfbfb;
   --color-button-shadow: var(--color-text-shadow);
   --color-box-shadow: var(--color-text-shadow);
@@ -75,14 +76,19 @@ button {
   box-shadow: 0px 2px 4px var(--color-button-shadow);
 }
 
-button:hover {
+button:disabled {
+  background-color: var(--color-button-disabled);
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
   transform: scale(1.05);
   cursor: pointer;
   background-color: var(--color-button-hover);
   box-shadow: 0px 3px 6px var(--color-button-shadow);
 }
 
-button:active {
+button:active:not(:disabled) {
   transform: scale(0.95);
   box-shadow: 0px 2px 4px var(--color-button-shadow);
 }

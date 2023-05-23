@@ -6,6 +6,7 @@
     let title: string;
     let directories: Array<String> = [];
     let files: Array<FileContent>;
+    let stack: Array<String> = [];
 
     currentDir.subscribe((dir) => {
         show = (dir !== null);
@@ -27,8 +28,25 @@
      async function browseChild(name: String) {
         try {
             await invoke("navigate_to_child_dir", {name: name});
+            stack.push(name);
+            stack = stack; // update state
         } catch (e) {
             alert("Could not read the child directory.");
+        } finally {
+            await loadCurrentDirJSON();
+        }
+    }
+
+    /**
+     * Explores the parent directory and refresh the UI.
+     */
+    async function browseParent() {
+        try {
+            await invoke("navigate_to_parent_dir");
+            stack.pop();
+            stack = stack; // update state
+        } catch (e) {
+            alert("Could not read the parent directory: " + e);
         } finally {
             await loadCurrentDirJSON();
         }
@@ -39,6 +57,7 @@
 
 {#if show}
     <div class="container">
+        <button on:click={browseParent} disabled={stack.length === 0}>Back</button>
         <div class="title-box">
             <h2>{title}</h2>
         </div>

@@ -58,7 +58,7 @@ impl Gallery {
     /// Creates an empty gallery
     pub fn new(path: PathBuf) -> Result<Self, Box<dyn error::Error>> {
         let dir_content = dir::read_dir(&path, true)?;
-        let root = Arc::new(Mutex::new(GalleryDir::new(path)?));
+        let root = Arc::new(Mutex::new(GalleryDir::new(path, None)?));
 
         let gallery = Gallery {
             root: Arc::clone(&root),
@@ -66,7 +66,7 @@ impl Gallery {
         };
         
         // gallery.root automatically deref to the mutex
-        gallery.root.lock().unwrap().fill(dir_content)?;
+        gallery.root.lock().unwrap().fill(dir_content, Arc::downgrade(&root))?;
         Ok(gallery)
     }
 
@@ -86,6 +86,14 @@ impl Gallery {
     pub fn explore_child_dir(&mut self, name: String) -> Result<(), NavError> {
         let arc_pointer = self.current_dir.upgrade().ok_or(NavError)?;
         let new_dir = arc_pointer.lock().unwrap().get_dir_by_name(name);
+        self.current_dir = new_dir.ok_or(NavError)?;
+        Ok(())
+    }
+
+    /// modify the current dir to the parent dir if it exists.
+    pub fn explore_parent_dir(&mut self) -> Result<(), NavError> {
+        let arc_pointer = self.current_dir.upgrade().ok_or(NavError)?;
+        let new_dir = arc_pointer.lock().unwrap().get_parent();
         self.current_dir = new_dir.ok_or(NavError)?;
         Ok(())
     }

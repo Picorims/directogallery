@@ -48,8 +48,6 @@ fn cache_root(path: &str, state: State<GalleryState>) -> Result<(), String> {
         // take the mutex before changing its value
         let mut gallery = state.0.lock().unwrap();
         *gallery = GalleryStateValue::Gallery(Gallery::new(PathBuf::from(path)).map_err(|e| e.to_string())?);
-        let gallery = gallery;
-        println!("{:?}", gallery);
     }
 
     Ok(())
@@ -75,13 +73,24 @@ fn navigate_to_child_dir(name: String, state: tauri::State<GalleryState>) -> Res
     }
 }
 
+#[tauri::command]
+/// navigate to the child directory selected by the given name.
+fn navigate_to_parent_dir(state: tauri::State<GalleryState>) -> Result<(), String> {
+    let mut gallery = state.0.lock().unwrap();
+    match *gallery {
+        GalleryStateValue::Nil => Err(JSONError.to_string()),
+        GalleryStateValue::Gallery(ref mut g) => Ok(g.explore_parent_dir().map_err(|e| e.to_string())?)
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(GalleryState(Mutex::new(GalleryStateValue::Nil)))
         .invoke_handler(tauri::generate_handler![
             cache_root,
             get_current_dir_data,
-            navigate_to_child_dir
+            navigate_to_child_dir,
+            navigate_to_parent_dir
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

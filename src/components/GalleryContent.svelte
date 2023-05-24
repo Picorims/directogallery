@@ -20,10 +20,14 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-    import { currentDir, loadCurrentDirJSON, type FileContent, stack } from "../stores";
+    import { currentDir, loadCurrentDirJSON, type FileContent, stack, lockScroll } from "../stores";
     import {convertFileSrc, invoke} from "@tauri-apps/api/tauri"
+    import ImageViewer from "./ImageViewer.svelte";
 
     let show: boolean = false;
+    let showImg: boolean = false;
+    let shownImgName: string = "";
+    let shownImgPath: string = "";
     let title: string;
     let directories: Array<String> = [];
     let files: Array<FileContent>;
@@ -45,7 +49,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
      * refresh the UI to load this child.
      * @param name name of the child directory
      */
-     async function browseChild(name: String) {
+    async function browseChild(name: String) {
         try {
             await invoke("navigate_to_child_dir", {name: name});
             $stack.push(name);
@@ -87,6 +91,26 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         }
         await loadCurrentDirJSON();
     }
+
+    /**
+     * Shows the image dialog for the given image metadata
+     * @param path
+     * @param name
+     */
+    function showImage(path: string, name: string) {        
+        shownImgName = name;
+        shownImgPath = path;
+        showImg = true;
+        lockScroll.set(true);
+    }
+
+    /**
+     * hides the image dialog
+     */
+    function hideImage() {
+        showImg = false;
+        lockScroll.set(false);
+    }
 </script>
 
 {#if show}
@@ -103,7 +127,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
                         class:locked={i === ($stack.length-1)}
                         role={i === ($stack.length-1)? null : "button"}
                         on:click={() => {browseStack(i)}}
-                        on:keypress={e => {
+                        on:keydown={e => {
                             if (e.key === "Enter") {
                                 browseStack(i);
                             }
@@ -131,12 +155,28 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         <h3>Files</h3>
         <div class="images-container">
             {#each files as file}
-            <figure class="img-container">
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <figure class="img-container" tabindex="0"
+                on:click={() => showImage(file.path, file.name)}
+                on:keydown={e => {
+                    if (e.key === "Enter") {
+                        showImage(file.path, file.name);
+                    }
+                }}
+                >
                 <img class="gallery-pic" src="{file.path}" alt="{(file.name === null)? "unknown" : file.name}">
             </figure>
             {/each}
         </div>
     </div>
+{/if}
+
+{#if showImg}
+    <ImageViewer name={shownImgName} path={shownImgPath}
+    on:close={() => {
+        hideImage();
+    }}
+    />
 {/if}
 
 <style>
@@ -166,7 +206,8 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         color: var(--color-faded-content);
     }
 
-    span.stack-item:hover:not(.locked) {
+    span.stack-item:hover:not(.locked),
+    span.stack-item:focus:not(.locked) {
         cursor: pointer;
         color: var(--color-theme-contrast);
         text-decoration: underline;
@@ -211,6 +252,13 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         margin: 0;
         border-radius: 5px;
         box-shadow: 0 2px 4px var(--color-box-shadow);
+        transition: 0.1s;
+    }
+
+    figure.img-container:hover, figure.img-container:focus {
+        transform: scale(1.02);
+        cursor: pointer;
+        opacity: 0.8;
     }
 
     img.gallery-pic {

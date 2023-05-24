@@ -25,6 +25,12 @@ body {
   user-select: none;
 }
 
+.g-lock-scroll {
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -45,6 +51,7 @@ body {
   --color-theme: #086898;
   --color-theme-contrast: #0a91d4;
   --color-text: #0f0f0f;
+  --color-text-invert: #fbfbfb;
   --color-faded-content: #4b4b4b;
   --color-text-main-title: var(--color-faded-content);
   --color-text-shadow: #929292;
@@ -53,9 +60,9 @@ body {
   --color-button: var(--color-theme);
   --color-button-hover: var(--color-theme-contrast);
   --color-button-disabled: var(--color-faded-content);
-  --color-button-text: #fbfbfb;
-  --color-button-shadow: var(--color-text-shadow);
   --color-box-shadow: var(--color-text-shadow);
+  --color-box-shadow-invert: #0f0f0f;
+  --color-button-text: #fbfbfb;
 
   color: var(--color-text);
   background-color: var(--color-background-main);
@@ -71,7 +78,7 @@ button {
   color: var(--color-button-text);
   border-radius: 5px;
   transition: 0.1s;
-  box-shadow: 0px 2px 4px var(--color-button-shadow);
+  box-shadow: 0px 2px 4px var(--color-box-shadow);
 }
 
 button:disabled {
@@ -83,12 +90,12 @@ button:hover:not(:disabled) {
   transform: scale(1.05);
   cursor: pointer;
   background-color: var(--color-button-hover);
-  box-shadow: 0px 3px 6px var(--color-button-shadow);
+  box-shadow: 0px 3px 6px var(--color-box-shadow);
 }
 
 button:active:not(:disabled) {
   transform: scale(0.95);
-  box-shadow: 0px 2px 4px var(--color-button-shadow);
+  box-shadow: 0px 2px 4px var(--color-box-shadow);
 }
 
 .g-box {

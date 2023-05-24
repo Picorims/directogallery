@@ -37,6 +37,7 @@ export interface DirContent {
  */
 export const currentDir: Writable<DirContent | null> = writable(null);
 export const stack: Writable<Array<String>> = writable([]);
+export const lockScroll: Writable<boolean> = writable(false);
 
 /**
  * Loads the currently selected directory in the UI by requesting

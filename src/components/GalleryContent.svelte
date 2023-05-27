@@ -159,7 +159,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
             <figure class="img-container" tabindex="0" style="height: {$imgScale}px"
                 on:click={() => showImage(file.path, file.name)}
                 on:keydown={e => {
-                    if (e.key === "Enter") {
+                    if (e.key === "Enter" || e.key === " ") {
                         showImage(file.path, file.name);
                     }
                 }}

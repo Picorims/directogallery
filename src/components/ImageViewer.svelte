@@ -36,7 +36,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
     const dispatch = createEventDispatcher();
 
-    function sendClose(e) {
+    function sendClose() {
         if (!lockBack) {
             dispatch("close");
             disableBack = true;
@@ -60,6 +60,8 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
     on:keydown={(e) =>{ /*tab navigation locked to this button*/
         if (e.key === "Tab") {
             e.preventDefault();
+        } else if (e.key === "Escape") {
+            sendClose();
         }
     }}
     on:keyup={e => lockBack = false}

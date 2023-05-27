@@ -22,7 +22,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
 <script lang="ts">
     import BackToTop from "./components/BackToTop.svelte";
-import GalleryContent from "./components/GalleryContent.svelte";
+    import GalleryContent from "./components/GalleryContent.svelte";
     import Header from "./components/Header.svelte";
     import { lockScroll } from "./stores";
 

@@ -99,20 +99,27 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         box-shadow: 0 2px 4px var(--color-box-shadow-invert);
     }
 
-    @media (prefers-color-scheme: dark) {
-        button.back-btn {
-            box-shadow: 0 2px 4px var(--color-box-shadow);
-        }
-    }
-
     figure.fig-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        max-height: 90%;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        margin: 20px;
         color: var(--color-text-invert);
         font-weight: bold;
         text-align: center;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        button.back-btn {
+            box-shadow: 0 2px 4px var(--color-box-shadow);
+        }
+
+        figure.fig-container {
+            color: var(--color-text);
+        }
     }
 
     figure.fig-container > figcaption {
@@ -120,8 +127,8 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
     }
     
     div.img-container {
-        max-width: 88%;
-        max-height: 90%;
+        width: 88%;
+        height: 90%;
         margin: 0;
         overflow: hidden;
         margin-bottom: 10px;
@@ -129,7 +136,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
     div.img-container > img {
         object-fit: contain;
-        max-width: 100%;
-        max-height: 100%;
+        width: 100%;
+        height: 100%;
     }
 </style>

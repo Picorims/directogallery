@@ -30,6 +30,8 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
 <style>
     div.container {
+        position: fixed;
+        z-index: 50;
         width: 100%;
         padding: 5px 20px;
         background-color: var(--color-background-box);

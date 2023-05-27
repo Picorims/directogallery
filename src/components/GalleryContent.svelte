@@ -113,8 +113,8 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
     }
 </script>
 
-{#if show}
-    <div class="container">
+<div class="container">
+    {#if show}
         <div class="stack-container g-box">
             <button on:click={() => browseParent()} disabled={$stack.length === 1}>Back</button>
             
@@ -168,12 +168,12 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
             </figure>
             {/each}
         </div>
-    </div>
-{:else}
-    <p class="notice">
-        Copyright (C) 2023  Charly Schmidt alias Picorims (picorims.contact@gmail.com) - GPL-3.0-or-later license
-    </p>
-{/if}
+    {:else}
+        <p class="notice">
+            Copyright (C) 2023  Charly Schmidt alias Picorims (picorims.contact@gmail.com) - GPL-3.0-or-later license
+        </p>
+    {/if}
+</div>
 
 
 {#if showImg}
@@ -192,6 +192,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
     div.container {
         padding: 20px;
+        padding-top: 70px;
         padding-bottom: 50px;
         box-sizing: border-box;
     }

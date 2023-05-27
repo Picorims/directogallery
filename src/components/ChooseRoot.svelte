@@ -43,6 +43,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
             // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
             try {
                 await invoke("cache_root", {path: selectedRoot});
+                window.scrollTo(0, 0);
                 await loadCurrentDirJSON(true);
             } catch (e) {
                 alert("Could not cache the current directory.");
@@ -52,9 +53,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <div class="container">
-    <div class="row">
-        <button on:click={selectRoot}>Choose root</button>
-    </div>
+    <button on:click={selectRoot}>Choose root</button>
     <p class="root-chosen">{selectedRoot}</p>
 </div>
 
@@ -66,6 +65,6 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
     }
 
     p.root-chosen {
-        margin: 0.25em 0;
+        margin: 0 0.5em;
     }
 </style>

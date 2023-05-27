@@ -21,8 +21,9 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
 
 <script lang="ts">
-    import GalleryContent from "./components/GalleryContent.svelte";
-    import Menu from "./components/Header.svelte";
+    import BackToTop from "./components/BackToTop.svelte";
+import GalleryContent from "./components/GalleryContent.svelte";
+    import Header from "./components/Header.svelte";
     import { lockScroll } from "./stores";
 
     lockScroll.subscribe((v) => {
@@ -31,6 +32,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <main class="container">
-    <Menu />
+    <Header />
     <GalleryContent />
+    <BackToTop />
 </main>

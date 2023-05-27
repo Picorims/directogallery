@@ -107,15 +107,15 @@ button:active:not(:disabled) {
 
 @media (prefers-color-scheme: dark) {
   :root {
-  /*dark theme*/
-  --color-theme: #0a8aca;
-  --color-theme-contrast: #0baafa;
-  --color-text: #fbfbfb;
-  --color-text-invert: #0f0f0f;
-  --color-faded-content: #b4b4b4;
-  --color-text-shadow: #0f0f0f;
-  --color-text-shadow-invert: #929292;
-  --color-background-main: #242424;
-  --color-background-box: #333333;
+    /*dark theme*/
+    --color-theme: #0a8aca;
+    --color-theme-contrast: #0baafa;
+    --color-text: #fbfbfb;
+    --color-text-invert: #0f0f0f;
+    --color-faded-content: #b4b4b4;
+    --color-text-shadow: #0f0f0f;
+    --color-text-shadow-invert: #929292;
+    --color-background-main: #242424;
+    --color-background-box: #333333;
   }
 }

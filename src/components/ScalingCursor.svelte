@@ -19,27 +19,22 @@ You should have received a copy of the GNU General Public License
 along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
-<script>
-    import ChooseRoot from "./ChooseRoot.svelte";
-    import ScalingCursor from "./ScalingCursor.svelte";
+<script lang="ts">
+    import { imgScale } from "src/stores";
 </script>
 
 <div class="container">
-    <ChooseRoot />
-    <ScalingCursor />
+    <label for="scaling-cursor">Scale: {$imgScale}</label>
+    <input id="scaling-cursor" type="range" min="50" max="500" step="25" bind:value={$imgScale}>
 </div>
 
 <style>
     div.container {
-        position: fixed;
-        z-index: 50;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        padding: 5px 20px;
-        background-color: var(--color-background-box);
-        overflow: auto; /*https://stackoverflow.com/questions/1762539/margin-on-child-element-moves-parent-element*/
-        box-shadow: 0 2px 4px var(--color-box-shadow);
+    }
+
+    label {
+        margin-right: 10px;
     }
 </style>

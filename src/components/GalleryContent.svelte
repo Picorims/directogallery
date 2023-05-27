@@ -20,7 +20,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <script lang="ts">
-    import { currentDir, loadCurrentDirJSON, type FileContent, stack, lockScroll } from "../stores";
+    import { currentDir, loadCurrentDirJSON, type FileContent, stack, lockScroll, imgScale } from "../stores";
     import {convertFileSrc, invoke} from "@tauri-apps/api/tauri"
     import ImageViewer from "./ImageViewer.svelte";
 
@@ -156,7 +156,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         <div class="images-container">
             {#each files as file}
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <figure class="img-container" tabindex="0"
+            <figure class="img-container" tabindex="0" style="height: {$imgScale}px"
                 on:click={() => showImage(file.path, file.name)}
                 on:keydown={e => {
                     if (e.key === "Enter") {

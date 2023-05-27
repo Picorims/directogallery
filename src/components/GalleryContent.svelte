@@ -169,7 +169,12 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
             {/each}
         </div>
     </div>
+{:else}
+    <p class="notice">
+        Copyright (C) 2023  Charly Schmidt alias Picorims (picorims.contact@gmail.com) - GPL-3.0-or-later license
+    </p>
 {/if}
+
 
 {#if showImg}
     <ImageViewer name={shownImgName} path={shownImgPath}
@@ -180,6 +185,11 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 {/if}
 
 <style>
+    p.notice {
+        margin: 10px;
+        text-align: center;
+    }
+
     div.container {
         padding: 20px;
         padding-bottom: 50px;

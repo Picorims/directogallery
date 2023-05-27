@@ -6,7 +6,7 @@
     }
 </script>
 
-<button class:hidden={scrollY < 50} on:click={backToTop}>^</button>
+<button class:hidden={scrollY < 50} on:click={backToTop}>▲</button>
 
 <svelte:window bind:scrollY={scrollY}/>
 
@@ -15,6 +15,8 @@
         position: fixed;
         bottom: 10px;
         right: 10px;
+        padding: 0.2em;
+        font-size: 2rem;
     }
 
     button.hidden {

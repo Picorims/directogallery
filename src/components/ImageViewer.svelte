@@ -97,6 +97,12 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         box-shadow: 0 2px 4px var(--color-box-shadow-invert);
     }
 
+    @media (prefers-color-scheme: dark) {
+        button.back-btn {
+            box-shadow: 0 2px 4px var(--color-box-shadow);
+        }
+    }
+
     figure.fig-container {
         display: flex;
         flex-direction: column;

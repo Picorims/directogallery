@@ -35,6 +35,8 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
     }
 
     label {
+        margin-left: 30px;
         margin-right: 10px;
+        white-space: nowrap;
     }
 </style>

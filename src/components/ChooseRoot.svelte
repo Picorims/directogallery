@@ -59,12 +59,17 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
 <style>
     div.container {
+        min-width: 0;
+        flex: 1 1 auto;
         display: flex;
         align-items: center;
-        text-align: center;
     }
 
     p.root-chosen {
+        min-width: 50px;
+        flex: 1 1 auto;
         margin: 0 0.5em;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 </style>

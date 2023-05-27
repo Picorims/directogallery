@@ -39,7 +39,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         width: 100%;
         padding: 5px 20px;
         background-color: var(--color-background-box);
-        overflow: auto; /*https://stackoverflow.com/questions/1762539/margin-on-child-element-moves-parent-element*/
+        overflow: hidden; /*https://stackoverflow.com/questions/1762539/margin-on-child-element-moves-parent-element*/
         box-shadow: 0 2px 4px var(--color-box-shadow);
     }
 </style>

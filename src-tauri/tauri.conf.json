@@ -55,7 +55,9 @@
         "resizable": true,
         "title": "directogallery",
         "width": 800,
-        "height": 600
+        "minWidth": 600,
+        "height": 600,
+        "minHeight": 450
       }
     ]
   }

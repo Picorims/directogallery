@@ -24,7 +24,7 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 </script>
 
 <div class="container">
-    <h1>Directogallery</h1>
+    <!-- <h1>Directogallery</h1> -->
     <ChooseRoot />
 </div>
 
@@ -37,10 +37,10 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         box-shadow: 0 2px 4px var(--color-box-shadow);
     }
 
-    h1 {
+    /* h1 {
         margin: 0.5em 0;
         text-align: center;
         text-shadow: 0 2px 4px var(--color-text-shadow);
         color: var(--color-text-main-title);
-    }
+    } */
 </style>

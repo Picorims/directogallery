@@ -60,8 +60,9 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 
 <style>
     div.container {
+        display: flex;
+        align-items: center;
         text-align: center;
-        padding: 0 10px;
     }
 
     p.root-chosen {

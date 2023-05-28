@@ -22,7 +22,10 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
     import { currentDir, loadCurrentDirJSON, type FileContent, stack, lockScroll, imgScale } from "../stores";
     import {convertFileSrc, invoke} from "@tauri-apps/api/tauri"
+    import { getVersion } from '@tauri-apps/api/app';
     import ImageViewer from "./ImageViewer.svelte";
+
+    let version = null;
 
     let show: boolean = false;
     let showImg: boolean = false;
@@ -31,6 +34,13 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
     let title: string;
     let directories: Array<String> = [];
     let files: Array<FileContent>;
+
+    async function getAppVersion() {
+        if (version === null) {
+            version = await getVersion();
+            console.log(version);
+        }
+    }
 
     currentDir.subscribe((dir) => {
         show = (dir !== null);
@@ -172,9 +182,11 @@ along with Directogallery.  If not, see <https://www.gnu.org/licenses/>.
         <p class="notice">
             Copyright (C) 2023  Charly Schmidt alias Picorims (picorims.contact@gmail.com) - GPL-3.0-or-later license
         </p>
+        <p class="notice">Running version {version}</p>
     {/if}
 </div>
 
+<svelte:window on:load={getAppVersion}/>
 
 {#if showImg}
     <ImageViewer name={shownImgName} path={shownImgPath}

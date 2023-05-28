@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "directogallery",
-    "version": "0.0.0"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -40,8 +40,21 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
-      "targets": "all"
+      "identifier": "com.picorims.directogallery",
+      "targets": "all",
+      "copyright": "Copyright (C) 2023  Charly Schmidt alias Picorims<picorims.contact@gmail.com>",
+      "category": "Utility",
+      "shortDescription": "Browse a system directory like an album.",
+      "longDescription": "Directogallery lets you open a directory to view pictures in a more convenient way. Pick a root directory, and explore all its content through a picture gallery designed to deal with various image dimensions. Adjust the gallery size using the cursor at the top, and show a picture by clicking on it.",
+      "windows": {
+        "digestAlgorithm": "SHA-256",
+        "nsis": {
+          "license": "../LICENSE"
+        },
+        "wix": {
+          "license": "../LICENSE"
+        }
+      }
     },
     "security": {
       "csp": null
